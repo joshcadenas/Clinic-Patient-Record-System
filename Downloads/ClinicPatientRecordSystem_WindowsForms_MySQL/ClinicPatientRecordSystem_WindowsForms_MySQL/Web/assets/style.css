@@ -33,36 +33,3 @@ textarea { min-height: 80px; }
   background: var(--card); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.55);
   border-radius: 24px; box-shadow: 0 18px 55px rgba(7, 59, 76, .16);
 }
-.login-card { width: min(470px, 100%); padding: 32px; }
-.brand { display: flex; gap: 14px; align-items: center; margin-bottom: 24px; }
-.brand h1, .brand h2 { margin: 0; }
-.brand p { margin: 6px 0 0; color: var(--muted); }
-.logo { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: white; font-size: 34px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); }
-.hint { color: var(--muted); font-size: 14px; }
-.error { color: #b42318; font-weight: 700; }
-.hidden { display: none !important; }
-.dashboard { width: min(1250px, 100%); min-height: 720px; display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: stretch; }
-.sidebar { padding: 22px; display: flex; flex-direction: column; }
-.brand.small { margin-bottom: 10px; }
-.brand.small .logo { width: 42px; height: 42px; font-size: 28px; }
-.role { background: var(--secondary); padding: 10px 12px; border-radius: 999px; color: var(--primary); font-weight: 700; }
-nav { display: grid; gap: 10px; margin: 18px 0; }
-nav button { text-align: left; background: transparent; color: var(--dark); box-shadow: none; border: 1px solid #d7efef; }
-nav button.active, nav button:hover { background: var(--secondary); color: var(--primary); }
-.logout { margin-top: auto; background: #073b4c; }
-.content { display: grid; gap: 18px; align-content: start; }
-.content header { padding: 26px; }
-.content header h1 { margin: 0 0 8px; }
-.content header p { margin: 0; color: var(--muted); }
-.panel { padding: 24px; overflow: auto; }
-.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
-.card { background: white; border: 1px solid #dceeee; border-radius: 18px; padding: 18px; }
-.card h3 { margin: 0 0 8px; }
-.table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; }
-.table th, .table td { padding: 12px; border-bottom: 1px solid #e5eeee; text-align: left; vertical-align: top; }
-.table th { background: var(--secondary); color: var(--primary); }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.actions button { padding: 8px 10px; font-size: 13px; }
-.success { color: var(--primary); font-weight: 700; }
-@media (max-width: 850px) { .dashboard { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
