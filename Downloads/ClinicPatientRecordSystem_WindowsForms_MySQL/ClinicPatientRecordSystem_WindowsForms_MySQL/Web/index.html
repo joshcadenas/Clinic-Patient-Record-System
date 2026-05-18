@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clinic Patient Record System</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="loginView" class="login-card">
+      <div class="brand">
+        <div class="logo">+</div>
+        <div>
+          <h1>Clinic Patient Record System</h1>
+          <p>Web dashboard connected to ASP.NET Core API</p>
+        </div>
+      </div>
+      <label>Username</label>
+      <input id="username" placeholder="Username" />
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="login()">Log in</button>
+      <p class="hint">Default admin: <b>admin/admin123</b> | user: <b>user/user123</b></p>
+      <p id="loginMessage" class="error"></p>
+    </section>
+
+    <section id="dashboardView" class="dashboard hidden">
+      <aside class="sidebar">
+        <div class="brand small"><div class="logo">+</div><h2>ClinicCare</h2></div>
+        <p id="roleBadge" class="role"></p>
+        <nav id="menu"></nav>
+        <button class="logout" onclick="logout()">Log out</button>
+      </aside>
+      <section class="content">
+        <header>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p>Changes here are saved through the API and database, so the C# Windows client sees the same data.</p>
+        </header>
+        <div id="panel" class="panel"></div>
+      </section>
+    </section>
+  </main>
+  <script src="assets/app.js"></script>
+</body>
+</html>
