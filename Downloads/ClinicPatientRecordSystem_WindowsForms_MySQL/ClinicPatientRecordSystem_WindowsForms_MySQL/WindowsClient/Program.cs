@@ -202,82 +202,144 @@ public class DashboardForm : Form
     private readonly Label _subtitle = new();
 
     public DashboardForm(LoginResponse login)
+{
+    _login = login;
+
+    Text = $"Clinic Patient Record System - {login.Role} Dashboard";
+    StartPosition = FormStartPosition.CenterScreen;
+    WindowState = FormWindowState.Maximized;
+    MinimumSize = new Size(1300, 760);
+    Font = new Font("Segoe UI", 10F);
+    BackColor = Color.FromArgb(230, 248, 247);
+
+    Controls.Clear();
+
+    var shell = new GradientPanel
     {
-        _login = login;
-        Text = $"Clinic Patient Record System - {login.Role} Dashboard";
-        StartPosition = FormStartPosition.CenterScreen;
-        WindowState = FormWindowState.Maximized;
-        MinimumSize = new Size(1100, 720);
-        Font = new Font("Segoe UI", 10F);
-        BackColor = Color.FromArgb(230, 248, 247);
+        Dock = DockStyle.Fill,
+        Padding = new Padding(22)
+    };
 
-        var shell = new GradientPanel { Dock = DockStyle.Fill, Padding = new Padding(22) };
-        Controls.Add(shell);
+    Controls.Add(shell);
 
-        var sidebar = new RoundedPanel { Width = 285, Dock = DockStyle.Left, BackColor = Color.FromArgb(248, 255, 255), Padding = new Padding(24) };
-        shell.Controls.Add(sidebar);
-
-        var brand = new Label { Text = "+  ClinicCare", Dock = DockStyle.Top, Height = 72, Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.FromArgb(5, 55, 70), TextAlign = ContentAlignment.MiddleLeft };
-        sidebar.Controls.Add(brand);
-
-        var badge = new Label { Text = login.Role + " dashboard", Dock = DockStyle.Top, Height = 44, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 11, FontStyle.Bold), BackColor = Color.FromArgb(224, 250, 247), ForeColor = Color.FromArgb(31, 143, 129) };
-        sidebar.Controls.Add(badge);
-
-        _menu.Dock = DockStyle.Fill;
-        _menu.Padding = new Padding(0, 28, 0, 0);
-        sidebar.Controls.Add(_menu);
-
-        var main = new Panel { Dock = DockStyle.Fill, Padding = new Padding(25, 0, 0, 0), BackColor = Color.Transparent };
-        shell.Controls.Add(main);
-
-        var header = new RoundedPanel { Dock = DockStyle.Top, Height = 115, BackColor = Color.FromArgb(248, 255, 255), Padding = new Padding(28, 18, 28, 10) };
-        main.Controls.Add(header);
-        _title.Dock = DockStyle.Top;
-        _title.Height = 48;
-        _title.Font = new Font("Segoe UI", 24, FontStyle.Bold);
-        _title.ForeColor = Color.FromArgb(5, 55, 70);
-        header.Controls.Add(_title);
-        _subtitle.Dock = DockStyle.Top;
-        _subtitle.Height = 35;
-        _subtitle.ForeColor = Color.DimGray;
-        header.Controls.Add(_subtitle);
-
-        _content.Dock = DockStyle.Fill;
-        _content.Padding = new Padding(0, 20, 0, 0);
-        main.Controls.Add(_content);
-        main.Controls.SetChildIndex(_content, 0);
-
-        BuildMenu();
-    }
-
-    private void BuildMenu()
+    var layout = new TableLayoutPanel
     {
-        _menu.Controls.Clear();
-        if (_login.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
-        {
-            AddMenu("Manage Patient Records", async () => await RenderPatientsAsync());
-            AddMenu("Appointment Management", async () => await RenderAppointmentsAsync());
-            AddMenu("Doctor & Staff Management", async () => await RenderDoctorsStaffAsync());
-            AddMenu("Generate Reports", async () => await RenderReportsAsync());
-        }
-        else
-        {
-            AddMenu("Patient Registration", () => { RenderPatientRegistration(); return Task.CompletedTask; });
-            AddMenu("Appointment Scheduling", async () => await RenderBookAppointmentAsync());
-            AddMenu("View Medical Records", async () => await RenderMedicalRecordsAsync());
-            AddMenu("Update Personal Information", async () => await RenderProfileAsync());
-        }
-        AddMenu("Log out", () => { Close(); return Task.CompletedTask; });
-        _ = _login.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) ? RenderPatientsAsync() : Task.Run(() => Invoke(new Action(RenderPatientRegistration)));
-    }
+        Dock = DockStyle.Fill,
+        ColumnCount = 2,
+        RowCount = 1,
+        BackColor = Color.Transparent
+    };
+
+    layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 330));
+    layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+
+    shell.Controls.Add(layout);
+
+    var sidebar = new RoundedPanel
+    {
+        Dock = DockStyle.Fill,
+        BackColor = Color.FromArgb(248, 255, 255),
+        Padding = new Padding(22)
+    };
+
+    layout.Controls.Add(sidebar, 0, 0);
+
+    var brand = new Label
+    {
+        Text = "+  ClinicCare",
+        Dock = DockStyle.Top,
+        Height = 70,
+        Font = new Font("Segoe UI", 20, FontStyle.Bold),
+        ForeColor = Color.FromArgb(5, 55, 70),
+        TextAlign = ContentAlignment.MiddleLeft
+    };
+
+    sidebar.Controls.Add(brand);
+
+    var badge = new Label
+    {
+        Text = login.Role + " dashboard",
+        Dock = DockStyle.Top,
+        Height = 48,
+        TextAlign = ContentAlignment.MiddleCenter,
+        Font = new Font("Segoe UI", 11, FontStyle.Bold),
+        BackColor = Color.FromArgb(224, 250, 247),
+        ForeColor = Color.FromArgb(31, 143, 129)
+    };
+
+    sidebar.Controls.Add(badge);
+    sidebar.Controls.SetChildIndex(badge, 0);
+    sidebar.Controls.SetChildIndex(brand, 0);
+
+    _menu.Dock = DockStyle.Fill;
+    _menu.Padding = new Padding(0, 120, 0, 0);
+    _menu.AutoScroll = true;
+    _menu.BackColor = Color.Transparent;
+
+    sidebar.Controls.Add(_menu);
+    sidebar.Controls.SetChildIndex(_menu, 2);
+
+    var main = new Panel
+    {
+        Dock = DockStyle.Fill,
+        Padding = new Padding(25, 0, 0, 0),
+        BackColor = Color.Transparent
+    };
+
+    layout.Controls.Add(main, 1, 0);
+
+    var header = new RoundedPanel
+    {
+        Dock = DockStyle.Top,
+        Height = 125,
+        BackColor = Color.FromArgb(248, 255, 255),
+        Padding = new Padding(30, 18, 30, 10)
+    };
+
+    main.Controls.Add(header);
+
+    _title.Dock = DockStyle.Top;
+    _title.Height = 55;
+    _title.Font = new Font("Segoe UI", 24, FontStyle.Bold);
+    _title.ForeColor = Color.FromArgb(5, 55, 70);
+    _title.TextAlign = ContentAlignment.MiddleLeft;
+    _title.AutoEllipsis = true;
+
+    _subtitle.Dock = DockStyle.Top;
+    _subtitle.Height = 35;
+    _subtitle.ForeColor = Color.DimGray;
+    _subtitle.TextAlign = ContentAlignment.MiddleLeft;
+    _subtitle.AutoEllipsis = true;
+
+    header.Controls.Add(_subtitle);
+    header.Controls.Add(_title);
+
+    _content.Dock = DockStyle.Fill;
+    _content.Padding = new Padding(0, 20, 0, 0);
+    _content.BackColor = Color.Transparent;
+
+    main.Controls.Add(_content);
+    main.Controls.SetChildIndex(_content, 0);
+
+    BuildMenu();
+}
+
+    
 
     private void AddMenu(string text, Func<Task> action)
     {
         var b = SecondaryButton(text);
+
         b.Dock = DockStyle.Top;
         b.Height = 58;
+        b.Width = 260;
         b.Margin = new Padding(0, 0, 0, 12);
+        b.TextAlign = ContentAlignment.MiddleCenter;
+        b.FlatAppearance.BorderColor = Color.FromArgb(190, 225, 222);
+        b.FlatAppearance.BorderSize = 1;
+
         b.Click += async (_, _) => await RunSafe(action);
+
         _menu.Controls.Add(b);
         _menu.Controls.SetChildIndex(b, 0);
     }
@@ -343,24 +405,32 @@ public class DashboardForm : Form
     }
 
     private void RenderPatientRegistration()
+{
+    SetPage("Patient Registration", "Register a patient through the same API used by the web dashboard.");
+
+    var card = NewCard();
+
+    var editor = new PatientEditor(null);
+    editor.Location = new Point(35, 35);
+    editor.Width = 430;
+    editor.Height = 360;
+    editor.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+    card.Controls.Add(editor);
+
+    var save = PrimaryButton("Register Patient");
+    save.Width = 180;
+    save.Height = 45;
+    save.Location = new Point(35, 430);
+
+    save.Click += async (_, _) => await RunSafe(async () =>
     {
-        SetPage("Patient Registration", "Register a patient through the same API used by the web dashboard.");
-        var card = NewCard();
-        var editor = new PatientEditor(null);
-        editor.Dock = DockStyle.Top;
-        card.Controls.Add(editor);
-        var save = PrimaryButton("Register Patient");
-        save.Width = 180;
-        save.Height = 45;
-        save.Top = editor.Bottom + 15;
-        save.Click += async (_, _) => await RunSafe(async () =>
-        {
-            var created = await ApiService.PostAsync<Patient>("patients", editor.GetPatient());
-            MessageBox.Show($"Registered patient ID: {created?.Id}", "ClinicCare");
-            editor.Clear();
-        });
-        card.Controls.Add(save);
-    }
+        var created = await ApiService.PostAsync<Patient>("patients", editor.GetPatient());
+        MessageBox.Show($"Registered patient ID: {created?.Id}", "ClinicCare");
+        editor.Clear();
+    });
+
+    card.Controls.Add(save);
+}
 
     private void ShowPatientEditor(Patient? patient, Func<Task> afterSave)
     {
@@ -425,27 +495,332 @@ public class DashboardForm : Form
     }
 
     private async Task RenderProfileAsync()
+{
+    SetPage("Update Personal Information", "Edit patient personal information through the API.");
+
+    var card = NewCard();
+
+    Patient? patient = null;
+
+    // Try patient ID from logged-in user first
+    if (_login.PatientId.HasValue && _login.PatientId.Value > 0)
     {
-        var id = _login.PatientId ?? AskInt("Enter patient ID", 1);
-        var patient = await ApiService.GetAsync<Patient>($"patients/{id}");
-        if (patient is null) { MessageBox.Show("Patient not found."); return; }
-        SetPage("Update Personal Information", "Edit your profile and save it through the API.");
-        var card = NewCard();
-        var editor = new PatientEditor(patient) { Dock = DockStyle.Top };
-        card.Controls.Add(editor);
-        var save = PrimaryButton("Save Changes");
-        save.Width = 170;
-        save.Height = 45;
-        save.Top = editor.Bottom + 10;
-        save.Click += async (_, _) => await RunSafe(async () =>
+        try
         {
-            await ApiService.PutAsync($"patients/{id}", editor.GetPatient());
-            MessageBox.Show("Profile updated.", "ClinicCare");
-        });
-        card.Controls.Add(save);
+            patient = await ApiService.GetAsync<Patient>($"patients/{_login.PatientId.Value}");
+        }
+        catch
+        {
+            patient = null;
+        }
     }
 
-    
+    // If not found, get first available patient from database
+    if (patient == null)
+    {
+        var patients = await ApiService.GetAsync<List<Patient>>("patients") ?? new List<Patient>();
+
+        if (patients.Count == 0)
+        {
+            MessageBox.Show(
+                "No patient record found. Please register a patient first.",
+                "ClinicCare",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            return;
+        }
+
+        patient = patients[0];
+    }
+
+    var name = Input(card, "Name", 20, 30);
+    name.Text = patient.Name;
+
+    var age = Input(card, "Age", 20, 95);
+    age.Text = patient.Age.ToString();
+
+    var birthday = Input(card, "Birthday", 20, 160);
+    birthday.Text = patient.Birthday.ToString("yyyy-MM-dd");
+
+    var contact = Input(card, "Contact", 20, 225);
+    contact.Text = patient.Contact;
+
+    var address = Input(card, "Address", 20, 290);
+    address.Text = patient.Address;
+
+    var save = PrimaryButton("Save Changes");
+    save.Location = new Point(20, 360);
+    save.Size = new Size(160, 42);
+    card.Controls.Add(save);
+
+    int patientId = patient.Id;
+
+    save.Click += async (_, _) =>
+    {
+        await RunSafe(async () =>
+        {
+            var updated = new Patient(
+                patientId,
+                name.Text,
+                int.TryParse(age.Text, out int parsedAge) ? parsedAge : 0,
+                DateTime.TryParse(birthday.Text, out DateTime parsedBirthday) ? parsedBirthday : DateTime.Today,
+                contact.Text,
+                address.Text
+            );
+
+            await ApiService.PutAsync($"patients/{patientId}", updated);
+
+            MessageBox.Show(
+                "Personal information updated successfully.",
+                "ClinicCare",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+
+            await RenderProfileAsync();
+        });
+    };
+}
+
+    private async Task RenderAppointmentsAsync()
+{
+    SetPage("Appointment Management", "Approve, reschedule, or cancel patient appointments.");
+
+    var card = NewCard();
+
+    var actions = new FlowLayoutPanel
+    {
+        Dock = DockStyle.Top,
+        Height = 60,
+        FlowDirection = FlowDirection.LeftToRight
+    };
+
+    card.Controls.Add(actions);
+
+    var approve = PrimaryButton("Approve");
+    var resched = SecondaryButton("Reschedule");
+    var cancel = DangerButton("Cancel");
+
+    actions.Controls.AddRange(new Control[] { approve, resched, cancel });
+
+    foreach (Button b in actions.Controls)
+    {
+        b.Width = 130;
+        b.Height = 42;
+    }
+
+    var list = await ApiService.GetAsync<List<AppointmentDto>>("appointments") ?? new();
+
+    var grid = Grid();
+    grid.DataSource = list;
+    grid.Dock = DockStyle.Fill;
+
+    card.Controls.Add(grid);
+    card.Controls.SetChildIndex(grid, 0);
+
+    AppointmentDto? Selected()
+    {
+        return grid.CurrentRow?.DataBoundItem as AppointmentDto;
+    }
+
+    approve.Click += async (_, _) =>
+    {
+        var appointment = Selected();
+
+        if (appointment != null)
+        {
+            await UpdateAppointment(appointment.Id, "Approved", null);
+        }
+    };
+
+    cancel.Click += async (_, _) =>
+    {
+        var appointment = Selected();
+
+        if (appointment != null)
+        {
+            await UpdateAppointment(appointment.Id, "Cancelled", null);
+        }
+    };
+
+    resched.Click += async (_, _) =>
+    {
+        var appointment = Selected();
+
+        if (appointment == null)
+        {
+            return;
+        }
+
+        var newDate = PromptDateTime(appointment.AppointmentDateTime);
+
+        if (newDate.HasValue)
+        {
+            await UpdateAppointment(appointment.Id, "Rescheduled", newDate.Value);
+        }
+    };
+}
+
+private async Task UpdateAppointment(int id, string status, DateTime? newDate)
+{
+    await RunSafe(async () =>
+    {
+        await ApiService.PutAsync(
+            $"appointments/{id}/status",
+            new UpdateAppointmentStatusRequest(status, newDate)
+        );
+
+        await RenderAppointmentsAsync();
+    });
+}
+
+private async Task RenderDoctorsStaffAsync()
+{
+    SetPage("Doctor & Staff Management", "Assign doctor schedules and manage clinic staff accounts.");
+
+    var card = NewCard();
+
+    var top = new FlowLayoutPanel
+    {
+        Dock = DockStyle.Top,
+        Height = 300,
+        FlowDirection = FlowDirection.LeftToRight,
+        WrapContents = false
+    };
+
+    card.Controls.Add(top);
+
+    var docPanel = SmallCard("Add Doctor Schedule");
+
+    var docName = Input(docPanel, "Name", 15, 45);
+    var spec = Input(docPanel, "Specialization", 15, 105);
+    var sched = Input(docPanel, "Schedule", 15, 165);
+
+    var saveDoc = PrimaryButton("Save Doctor");
+    saveDoc.Location = new Point(15, 225);
+    saveDoc.Size = new Size(140, 38);
+    docPanel.Controls.Add(saveDoc);
+    docPanel.Height = 275;
+
+    top.Controls.Add(docPanel);
+
+    var staffPanel = SmallCard("Add Staff");
+
+    var staffName = Input(staffPanel, "Full Name", 15, 45);
+    var pos = Input(staffPanel, "Position", 15, 105);
+    var user = Input(staffPanel, "Username", 15, 165);
+
+    var saveStaff = PrimaryButton("Save Staff");
+    saveStaff.Location = new Point(15, 225);
+    saveStaff.Size = new Size(140, 38);
+    staffPanel.Controls.Add(saveStaff);
+    staffPanel.Height = 275;
+
+    top.Controls.Add(staffPanel);
+
+    var tabs = new TabControl
+    {
+        Dock = DockStyle.Fill
+    };
+
+    card.Controls.Add(tabs);
+    card.Controls.SetChildIndex(tabs, 0);
+
+    var doctorsTab = new TabPage("Doctors");
+    var staffTab = new TabPage("Staff");
+
+    tabs.TabPages.Add(doctorsTab);
+    tabs.TabPages.Add(staffTab);
+
+    var doctors = await ApiService.GetAsync<List<Doctor>>("doctors") ?? new();
+    var staffs = await ApiService.GetAsync<List<StaffAccount>>("staff") ?? new();
+
+    var doctorsGrid = Grid();
+    doctorsGrid.DataSource = doctors;
+    doctorsGrid.Dock = DockStyle.Fill;
+    doctorsTab.Controls.Add(doctorsGrid);
+
+    var staffGrid = Grid();
+    staffGrid.DataSource = staffs;
+    staffGrid.Dock = DockStyle.Fill;
+    staffTab.Controls.Add(staffGrid);
+
+    saveDoc.Click += async (_, _) =>
+    {
+        await RunSafe(async () =>
+        {
+            await ApiService.PostNoResultAsync(
+                "doctors",
+                new Doctor(0, docName.Text, spec.Text, sched.Text)
+            );
+
+            await RenderDoctorsStaffAsync();
+        });
+    };
+
+    saveStaff.Click += async (_, _) =>
+    {
+        await RunSafe(async () =>
+        {
+            await ApiService.PostNoResultAsync(
+                "staff",
+                new StaffAccount(0, staffName.Text, pos.Text, user.Text)
+            );
+
+            await RenderDoctorsStaffAsync();
+        });
+    };
+}
+
+private async Task RenderReportsAsync()
+{
+    SetPage("Generate Reports", "Daily patients, income, appointment status, and diagnosis summary.");
+
+    var card = NewCard();
+
+    var report = await ApiService.GetAsync<ReportSummary>("reports/summary");
+
+    if (report == null)
+    {
+        return;
+    }
+
+    var stats = new FlowLayoutPanel
+    {
+        Dock = DockStyle.Top,
+        Height = 135,
+        FlowDirection = FlowDirection.LeftToRight,
+        WrapContents = true
+    };
+
+    card.Controls.Add(stats);
+
+    AddStat(stats, "Daily Patients", report.DailyPatients.ToString());
+    AddStat(stats, "Total Patients", report.TotalPatients.ToString());
+    AddStat(stats, "Pending", report.PendingAppointments.ToString());
+    AddStat(stats, "Approved", report.ApprovedAppointments.ToString());
+    AddStat(stats, "Income", "₱" + report.Income.ToString("N2"));
+
+    var label = new Label
+    {
+        Text = "Diagnosis Summary",
+        Dock = DockStyle.Top,
+        Height = 40,
+        Font = new Font("Segoe UI", 14, FontStyle.Bold),
+        ForeColor = Color.FromArgb(5, 55, 70)
+    };
+
+    card.Controls.Add(label);
+    card.Controls.SetChildIndex(label, 0);
+
+    var grid = Grid();
+    grid.DataSource = report.DiagnosisSummary;
+    grid.Dock = DockStyle.Fill;
+
+    card.Controls.Add(grid);
+    card.Controls.SetChildIndex(grid, 0);
+}
 
     private static void AddStat(Control parent, string title, string value)
     {
@@ -457,6 +832,7 @@ public class DashboardForm : Form
 
     private static DataGridView Grid() => new()
     {
+        Dock = DockStyle.Fill,
         AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
         SelectionMode = DataGridViewSelectionMode.FullRowSelect,
         MultiSelect = false,
@@ -465,7 +841,17 @@ public class DashboardForm : Form
         AllowUserToDeleteRows = false,
         BackgroundColor = Color.White,
         BorderStyle = BorderStyle.None,
-        RowHeadersVisible = false
+        RowHeadersVisible = false,
+        EnableHeadersVisualStyles = false,
+        ColumnHeadersHeight = 38,
+        RowTemplate = { Height = 32 },
+        Font = new Font("Segoe UI", 10),
+        ColumnHeadersDefaultCellStyle =
+        {
+           BackColor = Color.FromArgb(225, 250, 247),
+           ForeColor = Color.FromArgb(5, 82, 91),
+           Font = new Font("Segoe UI", 10, FontStyle.Bold)
+        }
     };
 
     private static RoundedPanel SmallCard(string title)
