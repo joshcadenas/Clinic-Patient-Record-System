@@ -205,54 +205,7 @@ public class DashboardForm : Form
 {
     _login = login;
 
-    Text = $"Clinic Patient Record System - {login.Role} Dashboard";
-    StartPosition = FormStartPosition.CenterScreen;
-    WindowState = FormWindowState.Maximized;
-    MinimumSize = new Size(1300, 760);
-    Font = new Font("Segoe UI", 10F);
-    BackColor = Color.FromArgb(230, 248, 247);
-
-    Controls.Clear();
-
-    var shell = new GradientPanel
-    {
-        Dock = DockStyle.Fill,
-        Padding = new Padding(22)
-    };
-
-    Controls.Add(shell);
-
-    var layout = new TableLayoutPanel
-    {
-        Dock = DockStyle.Fill,
-        ColumnCount = 2,
-        RowCount = 1,
-        BackColor = Color.Transparent
-    };
-
-    layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 330));
-    layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-
-    shell.Controls.Add(layout);
-
-    var sidebar = new RoundedPanel
-    {
-        Dock = DockStyle.Fill,
-        BackColor = Color.FromArgb(248, 255, 255),
-        Padding = new Padding(22)
-    };
-
-    layout.Controls.Add(sidebar, 0, 0);
-
-    var brand = new Label
-    {
-        Text = "+  ClinicCare",
-        Dock = DockStyle.Top,
-        Height = 70,
-        Font = new Font("Segoe UI", 20, FontStyle.Bold),
-        ForeColor = Color.FromArgb(5, 55, 70),
-        TextAlign = ContentAlignment.MiddleLeft
-    };
+    
 
     sidebar.Controls.Add(brand);
 
